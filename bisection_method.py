@@ -2,7 +2,7 @@ import math
 
 # Define the function whose root we want to find
 def f(x):
-    return math.exp(x) + (2 ** -x) + (2 * math.cos(x)) - 6
+    return math.exp(x) + (2 ** -x) + (2 * math.cos(x)) - 6 # <<<<--- Modify this part
 
 # Find a valid interval [a, b] where f(a) and f(b) have opposite signs
 def find_interval(a, b, step):
@@ -11,37 +11,22 @@ def find_interval(a, b, step):
         b += step
     return a, b
 
-# Bisection method with table output
-def bisection_method_with_table(a, b, tol=1e-6, max_iter=100):
+# Bisection method to find the root of f(x)
+def bisection_method(a, b, tol=1e-6, max_iter=100):
     if f(a) * f(b) >= 0:
         raise ValueError("Invalid initial interval: f(a) and f(b) must have opposite signs.")
-    
-    print("{:<10} {:<12} {:<12} {:<12} {:<12} {:<12} {:<12} {:<10}".format(
-        "Iteration", "a", "b", "c", "f(a)", "f(b)", "f(c)", "Updated"
-    ))
-    print("-" * 95)
-    
+
     for i in range(max_iter):
         c = (a + b) / 2  # Compute midpoint
-        f_a, f_b, f_c = f(a), f(b), f(c)
-        
-        # Determine which side is being updated based on the sign change
-        update_side = 'c → a' if f_c < 0 else 'c → b'
 
-        # Print the iteration data
-        print("{:<10} {:<12.6f} {:<12.6f} {:<12.6f} {:<12.6f} {:<12.6f} {:<12.6f} {:<10}".format(
-            i + 1, a, b, c, f_a, f_b, f_c, update_side
-        ))
-
-        if abs(f_c) < tol:  # Check if f(c) is close to zero
-            print("\nRoot found: {:.6f} in {} iterations".format(c, i + 1))
+        if abs(f(c)) < tol:  # Check if f(c) is close to zero
             return c
 
         # Narrow down the interval
-        if f_c < 0:
-            a = c
-        else:
+        if f(a) * f(c) < 0:
             b = c
+        else:
+            a = c
 
     raise ValueError("Max iterations reached without convergence.")
 
@@ -50,6 +35,7 @@ initial_a = 1.0
 initial_b = 2.0
 step = 0.1
 
-# Find a valid interval and compute the root with iteration tracking
+# Find a valid interval and compute the root
 a, b = find_interval(initial_a, initial_b, step)
-root = bisection_method_with_table(a, b)
+root = bisection_method(a, b)
+print(f"Root: {root:.6f}")
